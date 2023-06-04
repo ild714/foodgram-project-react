@@ -27,3 +27,40 @@ class CustomUserSerializer(UserSerializer):
             return False
         return Follow.objects.filter(user=self.context['request'].user,
                                      following=obj).exists()
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    following = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+
+    class Meta:
+        model = Follow
+        fields = ('user', 'following')
+
+    def validate(self, data):
+        user = self.context.get('request').user
+        following_id = data['following'].id
+        if Follow.objects.filter(user=user,
+                                 following_id=following_id).exists():
+            raise serializers.ValidationError(
+                'Вы уже подписаны на этого пользователя'
+            )
+        if user.id == following_id:
+            raise serializers.ValidationError('Нельзя подписаться на себя')
+        return data
+
+
+class ShowFollowSerializer(serializers.ModelSerializer):
+    is_subscribed = serializers.SerializerMethodField()
+
+    class Meta:
+        model = User
+        fields = ('email', 'id', 'username', 'first_name', 'last_name',
+                  'is_subscribed')
+        read_only_fields = fields
+
+    def get_is_subscribed(self, obj):
+        request = self.context.get('request')
+        if not request or request.user.is_anonymous:
+            return False
+        return obj.follower.filter(user=obj, following=request.user).exists()
