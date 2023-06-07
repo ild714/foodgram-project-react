@@ -3,6 +3,7 @@ from djoser.serializers import UserCreateSerializer, UserSerializer
 from rest_framework import serializers
 
 from .models import Follow
+from recipes.models import Recipe
 
 User = get_user_model()
 
@@ -50,13 +51,19 @@ class FollowSerializer(serializers.ModelSerializer):
         return data
 
 
+class FollowingRecipesSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
 class ShowFollowSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
         model = User
         fields = ('email', 'id', 'username', 'first_name', 'last_name',
-                  'is_subscribed')
+                  'is_subscribed', 'recipes', 'recipes_count')
         read_only_fields = fields
 
     def get_is_subscribed(self, obj):
@@ -64,3 +71,17 @@ class ShowFollowSerializer(serializers.ModelSerializer):
         if not request or request.user.is_anonymous:
             return False
         return obj.follower.filter(user=obj, following=request.user).exists()
+
+    def get_recipes(self, obj):
+        request = self.context.get('request')
+        recipes_limit = request.query_params.get('recipes_limit')
+        if recipes_limit is not None:
+            recipes = obj.recipes.all()[:(int(recipes_limit))]
+        else:
+            recipes = obj.recipes.all()
+        context = {'request': request}
+        return FollowingRecipesSerializers(recipes, many=True,
+                                           context=context).data
+
+    def get_recipes_count(self, obj):
+        return obj.recipes.count()
