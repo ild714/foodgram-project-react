@@ -29,7 +29,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             return ShowRecipeFullSerializer
         return AddRecipeSerializer
 
-    @action(detail=True, permissions_classes=[IsAuthorOrAdmin])
+    @action(detail=True, methods=['post'], permissions_classes=[IsAuthorOrAdmin])
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = FavouriteSerializer(data=data,
@@ -46,7 +46,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, permission_classes=[IsAuthorOrAdmin])
+    @action(detail=True, methods=['post'], permission_classes=[IsAuthorOrAdmin])
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = ShoppingListSerializer(data=data,
@@ -90,3 +90,19 @@ class RecipeViewSet(viewsets.ModelViewSet):
         response = HttpResponse(purchase, 'Content-Type: text/plain')
         response['Content-Disposition'] = f'attachment; filename=purchase.txt'
         return response
+
+
+class IngredientViewSet(RetriveAndListViewSet):
+    queryset = Ingredient.objects.all()
+    serializer_class = IngredientSerializer
+    permission_classes = [permissions.AllowAny]
+    filter_backends = [DjangoFilterBackend]
+    pagination_class = None
+    filterset_class = IngredientFilter
+
+
+class TagViewSet(RetriveAndListViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = [permissions.AllowAny]
+    pagination_class = None

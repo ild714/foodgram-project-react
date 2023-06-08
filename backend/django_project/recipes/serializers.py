@@ -45,8 +45,8 @@ class ShowRecipeFullSerializer(serializers.ModelSerializer):
     tags = TagSerializer(many=True, read_only=True)
     author = CustomUserSerializer(read_only=True)
     ingredients = serializers.SerializerMethodField()
-    is_favorited = serializers.SerialzierMethodField()
-    is_in_shopping_cart = serializers.SerialzierMethodField()
+    is_favorited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
@@ -82,7 +82,7 @@ class AddRecipeIngredientSerializer(serializers.ModelSerializer):
 
 
 class AddRecipeSerializer(serializers.ModelSerializer):
-    ingredients = AddRecipeIngredientSerializer(mane=True)
+    ingredients = AddRecipeIngredientSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(queryset=Tag.objects.all(),
                                               many=True)
     image = Base64ImageField()
@@ -182,13 +182,13 @@ class ShoppingListSerializer(serializers.ModelSerializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
-        model = Favorite
+        model = ShoppingList
         fields = ('user', 'recipe')
 
     def validate(self, data):
         user = data['user']
         recipe_id = data['recipe'].id
-        if Favorite.objects.filter(user=user, recipe__id=recipe_id).exists():
+        if ShoppingList.objects.filter(user=user, recipe__id=recipe_id).exists():
             raise ValidationError('Рецепт уже добавлен в список покупок')
         return data
 
