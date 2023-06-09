@@ -19,17 +19,19 @@ from .serializers import (
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all().order_by('-id')
     serializer_class = ShowRecipeFullSerializer
-    permissions_classes = [IsAuthorOrAdmin]
-    filter_backedns = [DjangoFilterBackend]
-    filter_class = RecipeFilter
+    permission_classes = [IsAuthorOrAdmin]
+    filter_backends = [DjangoFilterBackend]
     pagination_class = CustomPageNumberPaginator
+    filterset_class = RecipeFilter
 
-    def get_serialzier_class(self):
+    def get_serializer_class(self):
         if self.request.method == 'GET':
             return ShowRecipeFullSerializer
         return AddRecipeSerializer
 
-    @action(detail=True, methods=['post'], permissions_classes=[IsAuthorOrAdmin])
+    @action(detail=True,
+            methods=['post'],
+            permission_classes=[IsAuthorOrAdmin])
     def favorite(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = FavouriteSerializer(data=data,
@@ -46,7 +48,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         favorite.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=True, methods=['post'], permission_classes=[IsAuthorOrAdmin])
+    @action(detail=True,
+            methods=['post'],
+            permission_classes=[IsAuthorOrAdmin])
     def shopping_cart(self, request, pk):
         data = {'user': request.user.id, 'recipe': pk}
         serializer = ShoppingListSerializer(data=data,
@@ -64,7 +68,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_list.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, permissions_classes=[permissions.IsAuthenticated])
+    @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
         ingredients = request.user.shopping_list.all().values_list(
             'recipe__ingredients__name',
