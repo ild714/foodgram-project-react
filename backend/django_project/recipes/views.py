@@ -92,7 +92,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             purchase.append(f'{item} - {shopping_list[item]["amount"]} '
                             f'{shopping_list[item]["measurment_unit"]} \n')
         response = HttpResponse(purchase, 'Content-Type: text/plain')
-        response['Content-Disposition'] = f'attachment; filename=purchase.txt'
+        response['Content-Disposition'] = 'attachment; filename=purchase.txt'
         return response
 
 

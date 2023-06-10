@@ -4,6 +4,7 @@ from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from users.serializers import CustomUserSerializer
 from django.db.models import F
+
 from .models import (
     Tag, Recipe, Ingredient, Favorite, RecipeIngredient, ShoppingList
 )
@@ -188,7 +189,8 @@ class ShoppingListSerializer(serializers.ModelSerializer):
     def validate(self, data):
         user = data['user']
         recipe_id = data['recipe'].id
-        if ShoppingList.objects.filter(user=user, recipe__id=recipe_id).exists():
+        if ShoppingList.objects.filter(user=user,
+                                       recipe__id=recipe_id).exists():
             raise ValidationError('Рецепт уже добавлен в список покупок')
         return data
 
