@@ -73,16 +73,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = request.user.shopping_list.all().values_list(
             'recipe__ingredients__name',
             'recipe__ingredients__recipeingredient__amount',
-            'recipe__ingredients__measurment_unit'
+            'recipe__ingredients__measurement_unit'
         )
         shopping_list = {}
         for ingredient in ingredients:
             name = ingredient[0]
             amount = ingredient[1]
-            measurment_unit = ingredient[2]
+            measurement_unit = ingredient[2]
             if name not in shopping_list:
                 shopping_list[name] = {
-                    'measurment_unit': measurment_unit,
+                    'measurement_unit': measurement_unit,
                     'amount': amount
                 }
             else:
@@ -90,7 +90,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         purchase = []
         for item in shopping_list:
             purchase.append(f'{item} - {shopping_list[item]["amount"]} '
-                            f'{shopping_list[item]["measurment_unit"]} \n')
+                            f'{shopping_list[item]["measurement_unit"]} \n')
         response = HttpResponse(purchase, 'Content-Type: text/plain')
         response['Content-Disposition'] = 'attachment; filename=purchase.txt'
         return response
