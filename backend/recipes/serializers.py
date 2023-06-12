@@ -88,7 +88,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                               many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
-    cooking_time = serializers.IntegerField()
+    # cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
