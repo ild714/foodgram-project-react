@@ -88,6 +88,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                               many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
+    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -120,7 +121,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             if (RecipeIngredient.objects.
                     filter(recipe=recipe, ingredient=ingredient_id).exists()):
                 amount += F('amount')
-            RecipeIngredient.objects.bulk_create(
+            RecipeIngredient.objects.update_or_create(
                 recipe=recipe,
                 ingredient=ingredient_id,
                 defaults={'amount': amount}
