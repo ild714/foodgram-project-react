@@ -3,7 +3,7 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.serializers import ValidationError
 from users.serializers import CustomUserSerializer
-from django.db.models import F
+from django.db import transaction
 
 from .models import (
     Tag, Recipe, Ingredient, Favorite, RecipeIngredient, ShoppingList
@@ -113,7 +113,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                   'быть нулем или отрицательным числом')
         return data
 
-    def add_recipe_ingredients(self, ingredients, recipe):
+    def add_ingredients_to_recipe(self, ingredients, recipe):
         all_ingredients = []
 
         for ingredient in ingredients:
@@ -126,22 +126,21 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                     amount=amount
                 )
             )
-            # if (RecipeIngredient.objects.
-            #         filter(recipe=recipe, ingredient=ingredient_id).exists()):
-            #     amount += F('amount')
         RecipeIngredient.objects.bulk_create(all_ingredients)
 
+    @transaction.atomic
     def create(self, validated_data):
         author = self.context.get('request').user
-        tags = validated_data.pop('tags')
+        tags = validated_data.pop('tags')    
         ingredients = validated_data.pop('ingredients')
 
         recipe = Recipe.objects.create(author=author, **validated_data)
         recipe.ingredients.clear()
-        self.add_recipe_ingredients(ingredients, recipe)
+        self.add_ingredients_to_recipe(ingredients, recipe)
         recipe.tags.set(tags)
         return recipe
 
+    @transaction.atomic
     def update(self, recipe, validated_data):
         recipe.text = validated_data.get('text', recipe.text)
         recipe.name = validated_data.get('name', recipe.name)
@@ -149,12 +148,10 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                                  recipe.cooking_time)
         recipe.image = validated_data.get('image', recipe.image)
         if 'ingredients' in self.initial_data:
-            ingredients = validated_data.pop('ingredients')
             recipe.ingredients.clear()
-            self.add_recipe_ingredients(ingredients, recipe)
+            self.add_ingredients_to_recipe(validated_data.pop('ingredients'), recipe)
         if 'tags' in self.initial_data:
-            tags_datas = validated_data.pop('tags')
-            recipe.tags.set(tags_datas)
+            recipe.tags.set(validated_data.pop('tags'))
         recipe.save()
         return recipe
 
