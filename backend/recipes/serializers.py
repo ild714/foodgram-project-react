@@ -61,13 +61,13 @@ class ShowRecipeFullSerializer(serializers.ModelSerializer):
 
     def get_is_favorited(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        if request.user.is_anonymous:
             return False
         return Favorite.objects.filter(recipe=obj, user=request.user).exists()
 
     def get_is_in_shopping_cart(self, obj):
         request = self.context.get('request')
-        if not request or request.user.is_anonymous:
+        if request.user.is_anonymous:
             return False
         return ShoppingList.objects.filter(recipe=obj,
                                            user=request.user).exists()
@@ -88,7 +88,6 @@ class AddRecipeSerializer(serializers.ModelSerializer):
                                               many=True)
     image = Base64ImageField()
     author = CustomUserSerializer(read_only=True)
-    cooking_time = serializers.IntegerField()
 
     class Meta:
         model = Recipe
@@ -121,18 +120,21 @@ class AddRecipeSerializer(serializers.ModelSerializer):
             if (RecipeIngredient.objects.
                     filter(recipe=recipe, ingredient=ingredient_id).exists()):
                 amount += F('amount')
-            RecipeIngredient.objects.update_or_create(
-                recipe=recipe, ingredient=ingredient_id,
+            RecipeIngredient.objects.bulk_create(
+                recipe=recipe,
+                ingredient=ingredient_id,
                 defaults={'amount': amount}
             )
 
     def create(self, validated_data):
         author = self.context.get('request').user
-        tags_data = validated_data.pop('tags')
-        ingredients_data = validated_data.pop('ingredients')
+        tags = validated_data.pop('tags')
+        ingredients = validated_data.pop('ingredients')
+
         recipe = Recipe.objects.create(author=author, **validated_data)
-        self.add_recipe_ingredients(ingredients_data, recipe)
-        recipe.tags.set(tags_data)
+        recipe.ingredients.clear()
+        self.add_recipe_ingredients(ingredients, recipe)
+        recipe.tags.set(tags)
         return recipe
 
     def update(self, recipe, validated_data):
