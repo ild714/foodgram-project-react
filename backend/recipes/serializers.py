@@ -114,17 +114,22 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         return data
 
     def add_recipe_ingredients(self, ingredients, recipe):
+        all_ingredients = []
+
         for ingredient in ingredients:
             ingredient_id = ingredient['id']
             amount = ingredient['amount']
+            all_ingredients.append(
+                RecipeIngredient(
+                    recipe=recipe,
+                    ingredient=ingredient_id,
+                    amount=amount
+                )
+            )
             # if (RecipeIngredient.objects.
             #         filter(recipe=recipe, ingredient=ingredient_id).exists()):
             #     amount += F('amount')
-            RecipeIngredient.objects.update_or_create(
-                recipe=recipe,
-                ingredient=ingredient_id,
-                amount=amount
-            )
+        RecipeIngredient.objects.bulk_create(all_ingredients)
 
     def create(self, validated_data):
         author = self.context.get('request').user
