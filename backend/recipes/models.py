@@ -190,4 +190,3 @@ class ShoppingList(models.Model):
             name='unique_recipe_in_user_shopping_list'
             )
         ]
-

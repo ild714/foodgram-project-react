@@ -131,7 +131,7 @@ class AddRecipeSerializer(serializers.ModelSerializer):
     @transaction.atomic
     def create(self, validated_data):
         author = self.context.get('request').user
-        tags = validated_data.pop('tags')    
+        tags = validated_data.pop('tags')
         ingredients = validated_data.pop('ingredients')
 
         recipe = Recipe.objects.create(author=author, **validated_data)
@@ -149,16 +149,16 @@ class AddRecipeSerializer(serializers.ModelSerializer):
         recipe.image = validated_data.get('image', recipe.image)
         if 'ingredients' in self.initial_data:
             recipe.ingredients.clear()
-            self.add_ingredients_to_recipe(validated_data.pop('ingredients'), recipe)
+            self.add_ingredients_to_recipe(
+                validated_data.pop('ingredients'), recipe)
         if 'tags' in self.initial_data:
             recipe.tags.set(validated_data.pop('tags'))
         recipe.save()
         return recipe
 
     def to_representation(self, recipe):
-        data = ShowRecipeSerializer(
+        return ShowRecipeSerializer(
             recipe, context={'request': self.context.get('request')}).data
-        return data
 
 
 class FavouriteSerializer(serializers.ModelSerializer):
