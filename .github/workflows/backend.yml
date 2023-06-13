@@ -3,7 +3,7 @@ name: Foodgram
 on: [push]
 
 jobs:
-  tests:
+  test:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
