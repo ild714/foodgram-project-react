@@ -1,5 +1,7 @@
 name: Foodgram
 
+on: [push]
+
 jobs:
   tests:
     runs-on: ubuntu-latest
