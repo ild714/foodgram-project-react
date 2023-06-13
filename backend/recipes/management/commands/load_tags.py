@@ -23,7 +23,7 @@ class Command(BaseCommand):
                 encoding='UTF-8'
         ) as tags:
             for row in reader(tags):
-                if len(row) == 3:
+                if len(row) == 4:
                     Tag.objects.get_or_create(
                         name=row[0], color=row[1], slug=row[2],
                     )
