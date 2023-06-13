@@ -1,107 +1,31 @@
-# name: Foodgram
+name: Foodgram
 
-# on: [push]
-
-# jobs:
-#   # test:
-#   #   runs-on: ubuntu-latest
-#   #   steps:
-#   #   - uses: actions/checkout@v2
-#   #   - name: Set up Python
-#   #     uses: actions/setup-python@v2
-#   #     with:
-#   #       python-version: 3.7
-#   #   - name: Install dependencies
-#   #     run: |
-#   #       python -m pip install --upgrade pip
-#   #       pip install flake8 pep8-naming flake8-broken-line flake8-return 
-#   #       cd backend/
-#   #       pip install -r requirements.txt
-#   #   - name: Test with flake8
-#   #     run: |
-#   #       python -m flake8 --per-file-ignores=backend/backend/settings.py:E501
-
-
-#   build_and_push_to_docker_hub:
-#     name: Push Docker image to Docker Hub
-#     runs-on: ubuntu-latest
-#     # needs: test
-#     steps:
-#       - name: Check out the repo
-#         uses: actions/checkout@v2
-#       - name: Set up Docker Buildx
-#         uses: docker/setup-buildx-action@v1
-#       - name: Login to Docker
-#         uses: docker/login-action@v1
-#         with:
-#           username: ${{ secrets.DOCKER_USERNAME }}
-#           password: ${{ secrets.DOCKER_PASSWORD }}
-#       - name: Push backend to Docker Hub
-#         uses: docker/build-push-action@v2
-#         with:
-#           context: backend/
-#           push: true
-#           no-cache: true
-#           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
-#       - name: Push frontend to Docker Hub
-#         uses: docker/build-push-action@v2
-#         with:
-#           context: frontend/
-#           push: true
-#           no-cache: true
-#           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
-
-#   deploy:
-#     runs-on: ubuntu-latest
-#     needs: build_and_push_to_docker_hub
-#     # if: github.ref == 'refs/heads/master'
-#     steps:
-#       - name: executing remote ssh commands to deploy
-#         uses: appleboy/ssh-action@master
-#         with:
-#           host: ${{ secrets.HOST }}
-#           username: ${{ secrets.USER }}
-#           key: ${{ secrets.SSH_KEY }}
-#           passphrase: ${{ secrets.PASSPHRASE }}
-#           script: |
-#             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
-#             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
-#             sudo docker-compose down --volumes
-#             sudo docker-compose stop
-#             sudo docker-compose rm backend
-#             rm .env
-#             touch .env
-#             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
-#             echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-#             echo POSTGRES_USER=${{ secrets.POSTGRES_USER }} >> .env
-#             echo POSTGRES_PASSWORD=${{ secrets.POSTGRES_PASSWORD }} >> .env
-#             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
-#             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-#             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-#             sudo docker-compose up --detach
-#   send_message_success:
-#     runs-on: ubuntu-latest
-#     needs: deploy
-#     steps:
-#       - name: send message
-#         uses: appleboy/telegram-action@master
-#         with:
-#           to: ${{ secrets.TELEGRAM_TO }}
-#           token: ${{ secrets.TELEGRAM_TOKEN }}
-#           message: ${{ github.workflow }} успешно выполнен!
-
-name: foodgram_project
-
-on:
-  push:
-    branches:
-      - master
-      - main
+on: [push]
 
 jobs:
+  # test:
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v2
+  #     with:
+  #       python-version: 3.7
+  #   - name: Install dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install flake8 pep8-naming flake8-broken-line flake8-return 
+  #       cd backend/
+  #       pip install -r requirements.txt
+  #   - name: Test with flake8
+  #     run: |
+  #       python -m flake8 --per-file-ignores=backend/backend/settings.py:E501
+
+
   build_and_push_to_docker_hub:
     name: Push Docker image to Docker Hub
     runs-on: ubuntu-latest
+    # needs: test
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
@@ -115,30 +39,22 @@ jobs:
       - name: Push backend to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          push: true
           context: backend/
+          push: true
           no-cache: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
       - name: Push frontend to Docker Hub
         uses: docker/build-push-action@v2
         with:
-          push: true
           context: frontend/
+          push: true
           no-cache: true
           tags: ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
-      - name: Send message if build_and_push_to_docker_hub failed
-        if: ${{ failure() }}
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: |
-            Ошибка при сборке/отправке образа на DockerHub  - ${{ github.repository }}
-            https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push_to_docker_hub
+    # if: github.ref == 'refs/heads/master'
     steps:
       - name: executing remote ssh commands to deploy
         uses: appleboy/ssh-action@master
@@ -150,6 +66,7 @@ jobs:
           script: |
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
+            sudo docker-compose down --volumes
             sudo docker-compose stop
             sudo docker-compose rm backend
             rm .env
@@ -161,7 +78,7 @@ jobs:
             echo DB_HOST=${{ secrets.DB_HOST }} >> .env
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
-            sudo docker-compose up -d
+            sudo docker-compose up --detach
   send_message_success:
     runs-on: ubuntu-latest
     needs: deploy
@@ -172,15 +89,3 @@ jobs:
           to: ${{ secrets.TELEGRAM_TO }}
           token: ${{ secrets.TELEGRAM_TOKEN }}
           message: ${{ github.workflow }} успешно выполнен!
-          
-  send_message_fail:
-    runs-on: ubuntu-latest
-    needs: [build_and_push_to_docker_hub, deploy]
-    if: always() && (needs.build_and_push_to_docker_hub.result == 'failure' || needs.deploy.result == 'failure')
-    steps:
-      - name: send message
-        uses: appleboy/telegram-action@master
-        with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
-          message: ${{ github.workflow }} завершился с ошибкой!
