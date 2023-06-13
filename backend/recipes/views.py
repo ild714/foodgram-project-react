@@ -72,8 +72,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        shopping_list = ShoppingList.objects.filter(user=request.user)
-        id_recipes = [product.recipe.id for product in shopping_list]
+        shop_list = ShoppingList.objects.filter(user=request.user)
+        id_recipes = [product.recipe.id for product in shop_list]
         ingredients = RecipeIngredient.objects.filter(
             recipe__in=id_recipes).values(
                 'recipe__ingredients__name',
@@ -85,10 +85,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             ingredient_name = product['recipe__ingredients__name']
             measurement_unit = product['recipe__ingredients__measurement_unit']
             amount = product['amount']
-            text_result += f'{ingredient_name} ({measurement_unit}) {amount} \n'
+            text_result += f'{ingredient_name} ({measurement_unit}) {amount}\n'
 
         response = HttpResponse(text_result, content_type='text/plain')
-        response['Content-Disposition'] = 'attachment; filename=shopping_list.txt'
+        response['Content-Disposition'] = 'attachment; filename=shop_list.txt'
         return response
 
 
