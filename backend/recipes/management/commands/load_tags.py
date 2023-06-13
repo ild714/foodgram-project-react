@@ -2,13 +2,13 @@ from csv import reader
 
 from django.core.management.base import BaseCommand
 
-from recipes.models import Tag 
+from recipes.models import Tag
 
 
 class Command(BaseCommand):
     """
-    Добавляем теги из файла CSV.
-    После миграции БД запускаем командой
+    Добавление тегов из файла CSV.
+    Запуск по команде:
     python manage.py load_tags локально
     или
     sudo docker-compose exec backend python manage.py load_tags
@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         with open(
-                'recipes/data/recipes_tag.csv', 'r',
+                'recipes/data/recipes_tags.csv', 'r',
                 encoding='UTF-8'
         ) as tags:
             for row in reader(tags):

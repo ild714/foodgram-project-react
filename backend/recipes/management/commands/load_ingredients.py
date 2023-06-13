@@ -7,10 +7,9 @@ from recipes.models import Ingredient
 
 class Command(BaseCommand):
     """
-    Добавляем ингредиенты из файла CSV.
-    После миграции БД запускаем командой
+    Добавление ингредиентов из файла CSV.
+    Запуск по команде:
     python manage.py load_ingredients локально
-    или
     sudo docker-compose exec backend python manage.py load_ingredients
     на удаленном сервере.
     Создает записи в модели Ingredients из списка.
