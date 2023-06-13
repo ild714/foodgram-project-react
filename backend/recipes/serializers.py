@@ -51,8 +51,10 @@ class ShowRecipeFullSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ('id', 'tags', 'author', 'ingredients', 'name',
-                  'image', 'text', 'cooking_time', 'is_favorited',
+        fields = ('id', 'tags', 'author', 'name',
+                  'image', 'text', 'cooking_time',
+                  'ingredients',
+                  'is_favorited',
                   'is_in_shopping_cart')
 
     def get_ingredients(self, obj):

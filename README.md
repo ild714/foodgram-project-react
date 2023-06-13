@@ -1,7 +1,7 @@
 ![Django-app workflow](https://github.com/needred/foodgram-project-react/actions/workflows/backend.yml/badge.svg)
 
 # Foodgram - «Продуктовый помощник» 
-Благодаря данному сервису вы сможете сохранять рецепты, смотреть рецепты других пользователей, добавлять рецепты в избранное и создавать списки придокутов перед походом в магазин.
+Благодаря данному сервису вы сможете сохранять рецепты, смотреть рецепты других пользователей, добавлять рецепты в избранное и создавать списки продуктов перед походом в магазин.
 
 
 ### Workflow
@@ -45,6 +45,10 @@ sudo apt upgrade -y
 ```
 scp docker-compose.yaml <username>@<host>/home/<username>/docker-compose.yaml
 scp nginx.conf <username>@<host>/home/<username>/
+```
+Скопируйте директорию `docs` из вашего проекта на сервер:
+```
+scp source docs <username>@<host>/home/<username>/docs
 ```
 Установите Docker и Docker-compose:
 ```

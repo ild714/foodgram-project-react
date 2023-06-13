@@ -7,7 +7,7 @@ User = get_user_model()
 
 class Tag(models.Model):
     name = models.CharField(
-        'Название тега',
+        'Тег',
         max_length=200,
         unique=True
         )
@@ -17,7 +17,7 @@ class Tag(models.Model):
         unique=True
     )
     slug = models.CharField(
-        'Уникальный слаг',
+        'Слаг',
         max_length=200,
         unique=True
     )
@@ -34,7 +34,8 @@ class Tag(models.Model):
 class Ingredient(models.Model):
     name = models.CharField(
         'Название ингредиента',
-        max_length=200
+        max_length=200,
+        db_index=True
     )
     measurement_unit = models.CharField(
         'Мера измерения',
@@ -129,7 +130,7 @@ class RecipeTag(models.Model):
     )
 
     class Meta:
-        verbose_name = 'Теги'
+        verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
         constraints = [
             models.UniqueConstraint(
@@ -158,8 +159,8 @@ class Favorite(models.Model):
 
     class Meta:
         ordering = ('-id',)
-        verbose_name = 'Избранное'
-        verbose_name_plural = 'Избранное'
+        verbose_name = 'Избранный'
+        verbose_name_plural = 'Избранные'
         constraints = [
             models.UniqueConstraint(
                 fields=['user', 'recipe'],
