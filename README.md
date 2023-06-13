@@ -98,11 +98,11 @@ Email: ```admin1@yandex.ru```
 
 Логин: ```tim1```  
 Email: ```tim1@yandex.ru```  
-Пароль: ```qwerty123```  
+Пароль: ```trewq123```  
 
 Логин: ```tim2```  
 Email: ```tim2@yandex.ru```  
-Пароль: ```qwerty123```
+Пароль: ```trewq123```
 
 
 ## Ссылки
