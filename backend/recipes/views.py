@@ -75,7 +75,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
             permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
         ingredients = RecipeIngredient.objects.filter(
-            recipe__recipe_shopping_list__user=request.user
+            recipe__shopping_list__user=request.user
         ).values(
             "ingredient__name",
             "ingredient__measurement_unit"
