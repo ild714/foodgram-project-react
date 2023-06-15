@@ -172,14 +172,14 @@ class Favorite(models.Model):
 class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
+        related_name='user_shopping_list',
         on_delete=models.CASCADE,
-        related_name='shopping_list',
         verbose_name='Пользователи'
     )
     recipe = models.ForeignKey(
         Recipe,
+        related_name='recipe_shopping_list',
         on_delete=models.CASCADE,
-        related_name='shopping',
         verbose_name='Рецепт'
     )
 
@@ -189,6 +189,6 @@ class ShoppingList(models.Model):
         verbose_name_plural = 'Списки покупок'
         constraints = [models.UniqueConstraint(
             fields=['user', 'recipe'],
-            name='unique_recipe_in_user_shopping_list'
+            name='unique_shopping_list'
             )
         ]
