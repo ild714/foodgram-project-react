@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import Sum
+from django.db.models import F, Sum
 
 from .mixins import RetriveAndListViewSet
 from .models import (Ingredient, Recipe,
@@ -72,18 +72,16 @@ class RecipeViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
-        shop_list = ShoppingList.objects.filter(user=request.user)
-        id_recipes = [product.recipe.id for product in shop_list]
         ingredients = RecipeIngredient.objects.filter(
-            recipe__in=id_recipes).values(
-                'recipe__ingredient__name',
-                'recipe__ingredient__measurement_unit').annotate(
+            recipe__shpping_list__user=request.user).values(
+                name=F('ingredient__name'),
+                measurement_unit=F('ingredient__measurement_unit')).annotate(
                 amount=Sum('amount'))
-
+        
         text_result = ''
         for product in ingredients:
-            ingredient_name = product['recipe__ingredient__name']
-            measurement_unit = product['recipe__ingredient__measurement_unit']
+            ingredient_name = product['ingredient__name']
+            measurement_unit = product['ingredient__measurement_unit']
             amount = product['amount']
             text_result += f'{ingredient_name} ({measurement_unit}) {amount}\n'
 
