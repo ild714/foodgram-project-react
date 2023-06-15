@@ -67,9 +67,6 @@ jobs:
             sudo docker system prune -af
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-backend:latest
             sudo docker pull ${{ secrets.DOCKER_USERNAME }}/foodgram-frontend:latest
-            # sudo docker-compose down --volumes
-            # sudo docker-compose stop
-            # sudo docker-compose rm backend
             rm .env
             touch .env
             echo DB_ENGINE=${{ secrets.DB_ENGINE }} >> .env
@@ -80,11 +77,12 @@ jobs:
             echo DB_PORT=${{ secrets.DB_PORT }} >> .env
             echo SECRET_KEY=${{ secrets.SECRET_KEY }} >> .env
             sudo docker-compose up --detach
-            # sudo docker system prune -af
-            # sudo docker-compose exec backend python manage.py collectstatic --no-input
-            # sudo docker-compose exec backend python manage.py makemigrations users
-            # sudo docker-compose exec backend python manage.py makemigrations recipes
-            # sudo docker-compose exec backend python manage.py migrate --noinput
+            sudo docker-compose exec backend python manage.py collectstatic --no-input
+            sudo docker-compose exec backend python manage.py makemigrations users
+            sudo docker-compose exec backend python manage.py makemigrations recipes
+            sudo docker-compose exec backend python manage.py migrate --noinput
+            sudo docker-compose exec backend python manage.py load_ingredients
+            sudo docker-compose exec backend python manage.py load_tags
   send_message_success:
     runs-on: ubuntu-latest
     needs: deploy
