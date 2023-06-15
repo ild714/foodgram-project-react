@@ -172,13 +172,13 @@ class Favorite(models.Model):
 class ShoppingList(models.Model):
     user = models.ForeignKey(
         User,
-        # related_name='recipe_shopping_list',
+        related_name='recipe_shopping_list',
         on_delete=models.CASCADE,
         verbose_name='Пользователи'
     )
     recipe = models.ForeignKey(
         Recipe,
-        related_name='recipe_shopping_list',
+        # related_name='recipe_shopping_list',
         on_delete=models.CASCADE,
         verbose_name='Рецепт'
     )
