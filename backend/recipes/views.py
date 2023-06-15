@@ -76,7 +76,7 @@ class RecipeViewSet(viewsets.ModelViewSet):
         id_recipes = [product.recipe.id for product in shop_list]
         ingredients = RecipeIngredient.objects.filter(
             recipe__in=id_recipes).values(
-                'ngredients__name',
+                'ingredients__name',
                 'ingredients__measurement_unit').annotate(
                 amount=Sum('amount'))
 
