@@ -70,7 +70,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_lists.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    @action(detail=False, permission_classes=[permissions.IsAuthenticated])
+    @action(detail=False,
+            methods=["GET"],
+            permission_classes=[permissions.IsAuthenticated])
     def download_shopping_cart(self, request):
         ingredients = RecipeIngredient.objects.filter(
             recipe__recipe_shopping_list__user=request.user
