@@ -30,5 +30,5 @@ class RecipeFilter(filters.FilterSet):
 
     def get_shopping(self, queryset, name, value):
         if value:
-            return Recipe.objects.filter(shoppinglist__user=self.request.user)
+            return Recipe.objects.filter(shopping_list__user=self.request.user)
         return Recipe.objects.all()

@@ -70,29 +70,29 @@ class RecipeViewSet(viewsets.ModelViewSet):
         shopping_lists.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
-    # @action(detail=False,
-    #         methods=["GET"],
-    #         permission_classes=[permissions.IsAuthenticated])
-    # def download_shopping_cart(self, request):
-    #     ingredients = RecipeIngredient.objects.filter(
-    #         recipe__recipe_shopping_list__user=request.user
-    #     ).values(
-    #         "ingredient__name",
-    #         "ingredient__measurement_unit"
-    #     ).annotate(
-    #         amount=Sum('amount')
-    #     )
+    @action(detail=False,
+            methods=["GET"],
+            permission_classes=[permissions.IsAuthenticated])
+    def download_shopping_cart(self, request):
+        ingredients = RecipeIngredient.objects.filter(
+            recipe__recipe_shopping_list__user=request.user
+        ).values(
+            "ingredient__name",
+            "ingredient__measurement_unit"
+        ).annotate(
+            amount=Sum('amount')
+        )
 
-    #     text_result = ''
-    #     for product in ingredients:
-    #         ingredient_name = product['ingredient__name']
-    #         measurement_unit = product['ingredient__measurement_unit']
-    #         amount = product['amount']
-    #         text_result += f'{ingredient_name} ({measurement_unit}) {amount}\n'
+        text_result = ''
+        for product in ingredients:
+            ingredient_name = product['ingredient__name']
+            measurement_unit = product['ingredient__measurement_unit']
+            amount = product['amount']
+            text_result += f'{ingredient_name} ({measurement_unit}) {amount}\n'
 
-    #     response = HttpResponse(text_result, content_type='text/plain')
-    #     response['Content-Disposition'] = 'attachment; filename=shop_list.txt'
-    #     return response
+        response = HttpResponse(text_result, content_type='text/plain')
+        response['Content-Disposition'] = 'attachment; filename=shop_list.txt'
+        return response
 
 
 class IngredientViewSet(RetriveAndListViewSet):
