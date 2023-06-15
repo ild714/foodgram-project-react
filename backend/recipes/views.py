@@ -74,15 +74,15 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def download_shopping_cart(self, request):
         ingredients = RecipeIngredient.objects.filter(
             recipe__shpping_list__user=request.user).values(
-                name=F('recipe__ingredient__name'),
-                measurement_unit=F('recipe__ingredient__measurement_unit')
+                name=F('recipe__ingredients__name'),
+                measurement_unit=F('recipe__ingredients__measurement_unit')
                 ).annotate(
                 amount=Sum('amount'))
 
         text_result = ''
         for product in ingredients:
-            ingredient_name = product['recipe__ingredient__name']
-            measurement_unit = product['recipe__ingredient__measurement_unit']
+            ingredient_name = product['recipe__ingredients__name']
+            measurement_unit = product['recipe__ingredients__measurement_unit']
             amount = product['amount']
             text_result += f'{ingredient_name} ({measurement_unit}) {amount}\n'
 
