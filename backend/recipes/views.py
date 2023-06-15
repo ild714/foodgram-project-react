@@ -76,14 +76,14 @@ class RecipeViewSet(viewsets.ModelViewSet):
         id_recipes = [product.recipe.id for product in shop_list]
         ingredients = RecipeIngredient.objects.filter(
             recipe__in=id_recipes).values(
-                'ingredients__name',
-                'ingredients__measurement_unit').annotate(
+                'recipe__ingredients__name',
+                'recipe__ingredients__measurement_unit').annotate(
                 amount=Sum('amount'))
 
         text_result = ''
         for product in ingredients:
-            ingredient_name = product['ingredients__name']
-            measurement_unit = product['ingredients__measurement_unit']
+            ingredient_name = product['recipe__ingredients__name']
+            measurement_unit = product['recipe__ingredients__measurement_unit']
             amount = product['amount']
             text_result += f'{ingredient_name} ({measurement_unit}) {amount}\n'
 
