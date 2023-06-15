@@ -75,7 +75,8 @@ class RecipeViewSet(viewsets.ModelViewSet):
         ingredients = RecipeIngredient.objects.filter(
             recipe__shpping_list__user=request.user).values(
                 name=F('recipe__ingredient__name'),
-                measurement_unit=F('recipe__ingredient__measurement_unit')).annotate(
+                measurement_unit=F('recipe__ingredient__measurement_unit')
+                ).annotate(
                 amount=Sum('amount'))
 
         text_result = ''
