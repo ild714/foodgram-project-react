@@ -179,6 +179,7 @@ class ShoppingList(models.Model):
     recipe = models.ForeignKey(
         Recipe,
         on_delete=models.CASCADE,
+        related_name='shopping_list',
         verbose_name='Рецепт'
     )
 
