@@ -4,7 +4,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import permissions, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from django.db.models import F, Sum
+from django.db.models import Sum
 
 from .mixins import RetriveAndListViewSet
 from .models import (Ingredient, Recipe,
