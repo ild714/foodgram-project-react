@@ -78,7 +78,10 @@ class RecipeViewSet(viewsets.ModelViewSet):
             recipe__in=id_recipes).values(
                 'recipe__ingredients__name',
                 'recipe__ingredients__measurement_unit').annotate(
-                amount=Sum('amount'))
+                amount=Sum('amount')).values_list(
+                'recipe__ingredients__name',
+                'amount',
+                'recipe__ingredients__measurement_unit')
 
         text_result = ''
         for product in ingredients:
