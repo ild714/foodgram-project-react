@@ -65,9 +65,9 @@ class RecipeViewSet(viewsets.ModelViewSet):
     def delete_shopping_cart(self, request, pk):
         user = request.user
         recipe = get_object_or_404(Recipe, id=pk)
-        shopping_list = get_object_or_404(ShoppingList,
-                                          user=user, recipe=recipe)
-        shopping_list.delete()
+        shopping_lists = get_object_or_404(ShoppingList,
+                                           user=user, recipe=recipe)
+        shopping_lists.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @action(detail=False, permission_classes=[permissions.IsAuthenticated])
