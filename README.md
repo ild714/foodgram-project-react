@@ -100,25 +100,6 @@ Email: ```admin1@yandex.ru```
 Email: ```tim1@yandex.ru```  
 Пароль: ```trewq123```  
 
-Логин: ```tim2```  
-Email: ```tim2@yandex.ru```  
-Пароль: ```trewq123```
-
-Логин: ```tim3```  
-Email: ```tim3@yandex.ru```  
-Пароль: ```trewq123```  
-
-Логин: ```tim4```  
-Email: ```tim4@yandex.ru```  
-Пароль: ```trewq123```
-
-Логин: ```tim5```  
-Email: ```tim5@yandex.ru```  
-Пароль: ```trewq123```
-
-Логин: ```tim6```  
-Email: ```tim6@yandex.ru```  
-Пароль: ```trewq123```
 
 ## Ссылки
 ### Документация API Foodgram:
